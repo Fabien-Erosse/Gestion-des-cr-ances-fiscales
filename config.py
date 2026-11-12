@@ -14,7 +14,7 @@ class Config:
     MYSQL_USER = os.environ.get("MYSQL_USER", "root")
     MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", "")
     MYSQL_DB = os.environ.get("MYSQL_DB", "gestion_creances_fiscales")
-
+    MYSQL_SSL_CA = os.environ.get("MYSQL_SSL_CA")
     # Dossier où sont stockés les PDF de mise en demeure générés
     DOSSIER_PDF = os.path.join(os.path.dirname(__file__), "static", "relances_pdf")
 

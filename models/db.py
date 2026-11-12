@@ -9,19 +9,25 @@ Workflow des statuts d'une dette :
 import mysql.connector
 from config import Config
 
-
 def get_connection():
-    """Ouvre une connexion à la base MySQL gérée par XAMPP."""
-    return mysql.connector.connect(
-        host=Config.MYSQL_HOST,
-        port=Config.MYSQL_PORT,
-        user=Config.MYSQL_USER,
-        password=Config.MYSQL_PASSWORD,
-        database=Config.MYSQL_DB,
-        charset="utf8mb4",
-        collation="utf8mb4_unicode_ci",
-    )
+    """Connexion à XAMPP en local ou à TiDB Cloud sur Render."""
 
+    options = {
+        "host": Config.MYSQL_HOST,
+        "port": Config.MYSQL_PORT,
+        "user": Config.MYSQL_USER,
+        "password": Config.MYSQL_PASSWORD,
+        "database": Config.MYSQL_DB,
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_unicode_ci",
+    }
+
+    if Config.MYSQL_SSL_CA:
+        options["ssl_ca"] = Config.MYSQL_SSL_CA
+        options["ssl_verify_cert"] = True
+        options["ssl_verify_identity"] = True
+
+    return mysql.connector.connect(**options)
 
 # ------------------------ Utilisateurs ------------------------
 
