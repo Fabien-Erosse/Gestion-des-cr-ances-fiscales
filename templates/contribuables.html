@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titre %}Contribuables{% endblock %}
+{% block page_titre %}Contribuables{% endblock %}
+{% block contenu %}
+
+<div class="card-app">
+  <div class="section-titre">
+    <span>Contribuables</span>
+    <a href="{{ url_for('ajouter_contribuable') }}" class="btn btn-primary btn-sm">+ Ajouter un contribuable</a>
+  </div>
+
+  <form method="GET" class="barre-recherche">
+    <input type="text" name="q" value="{{ recherche }}" placeholder="🔎 Rechercher par nom, prénom ou numéro fiscal...">
+    <button type="submit" class="btn btn-outline btn-sm">Rechercher</button>
+  </form>
+  <table class="table-app">
+    <thead>
+      <tr><th>N°</th><th>Nom</th><th>Prénom</th><th>Numéro fiscal</th><th>Téléphone</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% set couleurs = ['#2d7ff9','#22b573','#f5a623','#8b5cf6','#e6432c'] %}
+      {% for c in contribuables %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>
+          <span class="avatar-initiales" style="background: {{ couleurs[loop.index0 % 5] }};">{{ c.nom[0]|upper }}</span>
+          {{ c.nom }}
+        </td>
+        <td>{{ c.prenom or '-' }}</td>
+        <td>{{ c.nif }}</td>
+        <td>{{ c.telephone or '-' }}</td>
+        <td>
+          <a href="{{ url_for('modifier_contribuable', id_contribuable=c.id) }}" class="btn-icon" title="Modifier">✏️</a>
+          <form method="POST" action="{{ url_for('supprimer_contribuable', id_contribuable=c.id) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce contribuable ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-icon" title="Supprimer">🗑️</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Aucun contribuable trouvé.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p style="color:var(--text-muted); font-size:0.82rem; margin-top:12px;">Affichage de {{ contribuables|length }} contribuable(s).</p>
+</div>
+
+{% endblock %}

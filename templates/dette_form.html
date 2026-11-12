@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block titre %}Ajouter une dette fiscale{% endblock %}
+{% block page_titre %}Ajouter une dette fiscale{% endblock %}
+{% block contenu %}
+
+<div class="card-app" style="max-width:520px;">
+  <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Contribuable *</label>
+    <select name="id_contribuable" required>
+      <option value="">-- Sélectionner --</option>
+      {% for c in contribuables %}
+      <option value="{{ c.id }}">{{ c.nom }} {{ c.prenom or '' }} ({{ c.nif }})</option>
+      {% endfor %}
+    </select>
+
+    <label>Type d'impôt *</label>
+    <select name="nature_impot" required>
+      <option value="Impôt sur le revenu">Impôt sur le revenu</option>
+      <option value="TVA">TVA</option>
+      <option value="IS">Impôt sur les sociétés (IS)</option>
+      <option value="Taxe foncière">Taxe foncière</option>
+      <option value="Autres">Autres</option>
+    </select>
+
+    <label>Montant (Ar) *</label>
+    <input type="number" step="0.01" name="montant" required>
+
+    <label>Date de création *</label>
+    <input type="date" name="date_emission" required>
+
+    <label>Date d'échéance *</label>
+    <input type="date" name="date_echeance" required>
+
+    <label>Statut *</label>
+    <select name="statut">
+      <option value="en_attente">En attente</option>
+      <option value="echue">Échue</option>
+      <option value="relance">Relance</option>
+      <option value="mise_en_demeure">Mise en demeure</option>
+      <option value="payee">Payée</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+    <a href="{{ url_for('dettes') }}" class="btn btn-outline">Annuler</a>
+  </form>
+</div>
+
+{% endblock %}

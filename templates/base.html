@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block titre %}Gestion des créances fiscales{% endblock %}</title>
+  <script>
+    // Applique le thème choisi AVANT le rendu de la page (évite le flash clair/sombre)
+    (function () {
+      var theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">💠 Gestion des créances fiscales<small>Administration Fiscale</small></div>
+      <nav>
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">🏠 Tableau de bord</a>
+        <a href="{{ url_for('contribuables') }}" class="{{ 'active' if request.endpoint in ['contribuables','ajouter_contribuable','modifier_contribuable'] }}">👥 Contribuables</a>
+        <a href="{{ url_for('dettes') }}" class="{{ 'active' if request.endpoint in ['dettes','ajouter_dette'] }}">🧾 Dettes fiscales</a>
+        <a href="{{ url_for('relances') }}" class="{{ 'active' if request.endpoint in ['relances'] }}">🔔 Relances</a>
+        <a href="{{ url_for('mise_en_demeure_index') }}" class="{{ 'active' if request.endpoint in ['mise_en_demeure_index','mise_en_demeure'] }}">📨 Mise en demeure</a>
+        <a href="{{ url_for('rapports') }}" class="{{ 'active' if request.endpoint=='rapports' }}">📊 Rapports</a>
+        <a href="{{ url_for('parametres') }}" class="{{ 'active' if request.endpoint=='parametres' }}">⚙️ Paramètres</a>
+      </nav>
+      <div class="bas">
+        <a href="{{ url_for('logout') }}">⏻ Déconnexion</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <h1>{% block page_titre %}Tableau de bord{% endblock %}</h1>
+        <div class="infos">
+          <span>{{ date_fr }}</span>
+          <div class="avatar" id="themeToggle" title="Changer de thème (clair / sombre)">{{ session.get('utilisateur','?')[0]|upper }}</div>
+          <span>{{ session.get('utilisateur','') }}</span>
+        </div>
+      </div>
+
+      <div class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for categorie, message in messages %}
+            <div class="{{ 'message-erreur' if categorie == 'erreur' else 'message-succes' }}">{{ message }}</div>
+          {% endfor %}
+        {% endwith %}
+
+        {% block contenu %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Bascule thème clair <-> sombre "Trésor Public" au clic sur l'avatar
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      var actuel = document.documentElement.getAttribute('data-theme') || 'light';
+      var suivant = actuel === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', suivant);
+      location.reload();
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

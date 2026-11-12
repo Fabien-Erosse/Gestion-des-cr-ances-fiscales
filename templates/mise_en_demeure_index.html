@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titre %}Mise en demeure{% endblock %}
+{% block page_titre %}Mise en demeure{% endblock %}
+{% block contenu %}
+
+<div class="card-app">
+  <div class="section-titre"><span>Dossiers concernés par une mise en demeure</span></div>
+  <table class="table-app">
+    <thead>
+      <tr><th>N°</th><th>Contribuable</th><th>Type d'impôt</th><th>Montant</th><th>Échéance</th><th>Statut</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for d in dettes %}
+      <tr>
+        <td>D-{{ '%05d'|format(d.id) }}</td>
+        <td>{{ d.nom_contribuable }} {{ d.prenom_contribuable or '' }}</td>
+        <td>{{ d.nature_impot }}</td>
+        <td>{{ "{:,.0f}".format(d.montant).replace(",", " ") }} Ar</td>
+        <td>{{ d.date_echeance }}</td>
+        <td><span class="badge badge-{{ d.statut }}">{{ d.statut|libelle_statut }}</span></td>
+        <td><a href="{{ url_for('mise_en_demeure', id_dette=d.id) }}" class="btn btn-outline btn-sm">Ouvrir</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Aucun dossier de mise en demeure pour le moment.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

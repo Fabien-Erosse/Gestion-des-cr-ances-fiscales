@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion - Gestion des créances fiscales</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="lg-page" style="background-image: url('{{ url_for('static', filename='img/fond_login.jpg') }}');">
+  <div class="lg-overlay"></div>
+
+  <div class="lg-conteneur">
+    <!-- Bloc gauche : identité de l'administration -->
+    <section class="lg-gauche">
+      <svg class="lg-embleme" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#c9a227" stroke-width="3"/>
+        <path d="M32 12 L48 18 V32 C48 42 41 49 32 53 C23 49 16 42 16 32 V18 Z" fill="#0f2942"/>
+        <path d="M32 20 L32 46 M22 28 H42" stroke="#c9a227" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <h1>Administration Fiscale</h1>
+      <p class="lg-sous-titre">Application de gestion et de suivi<br>des créances fiscales</p>
+      <p class="lg-slogan">Ensemble pour une meilleure<br>collecte des recettes fiscales</p>
+    </section>
+
+    <!-- Bloc droit : formulaire de connexion -->
+    <section class="lg-carte">
+      <div class="lg-carte-icone">&#128100;</div>
+      <h2>Connexion</h2>
+      <div class="lg-carte-titre-app">Gestion des créances fiscales</div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for categorie, message in messages %}
+          <div class="{{ 'message-erreur' if categorie == 'erreur' else 'message-succes' }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      
+<form method="POST" action="{{ url_for('login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="lg-champ">
+        <span class="lg-champ-icone">&#128100;</span>
+        <input type="text" id="identifiant" name="identifiant"
+               placeholder="Utilisateur" required autofocus>
+    </div>
+
+    <div class="lg-champ">
+        <span class="lg-champ-icone">&#128274;</span>
+        <input type="password" id="mot_de_passe" name="mot_de_passe"
+               placeholder="Mot de passe" required>
+        <span class="lg-oeil" id="toggleOeil"
+              title="Afficher / masquer le mot de passe">&#128065;</span>
+    </div>
+
+    <button type="submit" class="lg-bouton">Se connecter</button>
+</form>
+
+      <a href="#" class="lg-oublie" id="lienOublie">Mot de passe oublié ?</a>
+      <div class="lg-info" id="infoOublie" style="display:none;">
+        Veuillez contacter l'administrateur du système pour réinitialiser votre mot de passe.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    var champ = document.getElementById('mot_de_passe');
+    var oeil = document.getElementById('toggleOeil');
+    oeil.addEventListener('click', function () {
+      if (champ.type === 'password') {
+        champ.type = 'text';
+        oeil.innerHTML = '&#128064;';   // mot de passe affiché
+      } else {
+        champ.type = 'password';
+        oeil.innerHTML = '&#128065;';   // mot de passe masqué
+      }
+    });
+    document.getElementById('lienOublie').addEventListener('click', function (e) {
+      e.preventDefault();
+      var info = document.getElementById('infoOublie');
+      info.style.display = info.style.display === 'none' ? 'block' : 'none';
+    });
+  </script>
+</body>
+</html>

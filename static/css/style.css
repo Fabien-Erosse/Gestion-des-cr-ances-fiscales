@@ -1,0 +1,359 @@
+/* =========================================================
+   Thème "Administration Fiscale" - clair (défaut) + sombre
+   Gestion des créances fiscales
+   ========================================================= */
+
+:root {
+  --bg-page: #eef2f8;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --text-dark: #1c2b3a;
+  --text-muted: #6b7c93;
+  --border-color: #e3e9f2;
+  --table-hover: #f7faff;
+  --shadow-card: 0 2px 6px rgba(20,30,60,0.04);
+
+  --sidebar-bg: #0f1f3a;
+  --sidebar-hover: #16294a;
+
+  --accent: #2d7ff9;
+  --accent-hover: #1b63d1;
+
+  --blue: #2d7ff9;
+  --green: #22b573;
+  --red: #e6432c;
+  --orange: #f5a623;
+  --purple: #8b5cf6;
+  --grey-blue: #64748b;
+}
+
+/* ---------- Thème sombre "Trésor Public" ---------- */
+:root[data-theme="dark"] {
+  --bg-page: #0a1929;
+  --card-bg: #0f2942;
+  --input-bg: #0a1929;
+  --text-dark: #e8f1f8;
+  --text-muted: #8fa8bf;
+  --border-color: #1c3a56;
+  --table-hover: #13324f;
+  --shadow-card: 0 2px 10px rgba(0,0,0,0.35);
+
+  --sidebar-bg: #081422;
+  --sidebar-hover: #0f2942;
+
+  --accent: #00d4ff;
+  --accent-hover: #00a8cc;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-dark);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  margin: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+a { color: var(--accent); text-decoration: none; }
+
+/* ---------- Structure générale (sidebar + contenu) ---------- */
+.app-shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 240px;
+  background-color: var(--sidebar-bg);
+  color: #cdd8e8;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.sidebar .brand {
+  padding: 22px 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar .brand small { display:block; font-weight: 400; color: #8fa3c0; font-size: 0.72rem; margin-top:2px;}
+.sidebar nav { flex: 1; padding: 14px 0; }
+.sidebar nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 20px;
+  color: #b7c4da;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+}
+.sidebar nav a:hover { background: var(--sidebar-hover); color: #fff; }
+.sidebar nav a.active {
+  background: var(--sidebar-hover);
+  color: #fff;
+  border-left-color: var(--accent);
+}
+.sidebar .bas { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.sidebar .bas a { color: #b7c4da; font-size: 0.88rem; display:flex; align-items:center; gap:8px; }
+
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+.topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 30px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar h1 { font-size: 1.25rem; margin: 0; color: var(--text-dark); }
+.topbar .infos { display:flex; align-items:center; gap:16px; color: var(--text-muted); font-size:0.85rem;}
+.topbar .avatar {
+  width: 34px; height:34px; border-radius:50%;
+  background: var(--accent); color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:0.8rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.topbar .avatar:hover { transform: scale(1.08); box-shadow: 0 0 0 3px rgba(45,127,249,0.18); }
+:root[data-theme="dark"] .topbar .avatar:hover { box-shadow: 0 0 0 3px rgba(0,212,255,0.22); }
+
+.page-content { padding: 26px 30px; }
+
+/* ---------- Cartes ---------- */
+.card-app {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Cartes statistiques colorées (identiques dans les 2 thèmes) ---------- */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(20,30,60,0.12);
+}
+.stat-card .valeur { font-size: 1.9rem; font-weight: 700; }
+.stat-card .label { font-size: 0.85rem; opacity: 0.92; margin-top: 2px; }
+.stat-blue   { background: linear-gradient(135deg, #2d7ff9, #1b63d1); }
+.stat-green  { background: linear-gradient(135deg, #22b573, #16955c); }
+.stat-red    { background: linear-gradient(135deg, #e6432c, #c22f1c); }
+.stat-orange { background: linear-gradient(135deg, #f5a623, #d98c0f); }
+.stat-purple { background: linear-gradient(135deg, #8b5cf6, #6d3fd6); }
+
+/* ---------- Grille de graphiques ---------- */
+.charts-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; margin-bottom: 22px; }
+@media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+.chart-titre { font-weight: 700; font-size: 0.95rem; margin-bottom: 14px; color: var(--text-dark); }
+.chart-vide { color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 40px 0; }
+
+/* ---------- Tableaux ---------- */
+table.table-app { width: 100%; border-collapse: collapse; }
+table.table-app th {
+  text-align: left;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+table.table-app td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+table.table-app tr:hover { background-color: var(--table-hover); }
+
+/* ---------- Avatars initiales (liste contribuables) ---------- */
+.avatar-initiales {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 0.75rem;
+  margin-right: 8px; vertical-align: middle;
+}
+
+/* ---------- Badges de statut ---------- */
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing:0.3px;}
+.badge-en_attente { background: rgba(100, 116, 139, 0.18); color: #94a5ba; }
+.badge-echue { background: rgba(230, 67, 44, 0.16); color: #ff6a51; }
+.badge-relance { background: rgba(245, 166, 35, 0.18); color: #ffb84d; }
+.badge-mise_en_demeure { background: rgba(139, 92, 246, 0.18); color: #a684fb; }
+.badge-payee { background: rgba(34, 181, 115, 0.18); color: #3fd696; }
+:root:not([data-theme="dark"]) .badge-en_attente { color: var(--grey-blue); }
+:root:not([data-theme="dark"]) .badge-echue { color: var(--red); }
+:root:not([data-theme="dark"]) .badge-relance { color: var(--orange); }
+:root:not([data-theme="dark"]) .badge-mise_en_demeure { color: var(--purple); }
+:root:not([data-theme="dark"]) .badge-payee { color: var(--green); }
+
+/* ---------- Boutons ---------- */
+.btn {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.87rem;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-success { background: var(--green); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+.btn-icon {
+  width: 30px; height: 30px; border-radius: 7px; border:1px solid var(--border-color);
+  background: var(--card-bg); display:inline-flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size: 0.85rem; margin-right:4px;
+}
+.btn-icon:hover { background: var(--table-hover); }
+
+/* ---------- Barre de recherche ---------- */
+.barre-recherche { display:flex; gap:10px; margin-bottom: 16px; }
+.barre-recherche input { flex:1; margin-bottom:0; }
+
+/* ---------- Formulaires ---------- */
+label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.85rem; font-weight:600;}
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-dark);
+  font-size: 0.92rem;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+
+/* ---------- Page de connexion (toujours en thème sombre navy/cyan) ---------- */
+.login-page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at top, #0f2942 0%, #0a1929 70%);
+}
+.login-card {
+  background-color: #0f2942; border: 1px solid #1c3a56; border-radius: 14px;
+  padding: 40px 36px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+.login-icon {
+  width: 56px; height: 56px; border-radius: 50%; background: rgba(0,212,255,0.12);
+  border: 1px solid #00d4ff; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px auto; font-size: 1.6rem; color: #00d4ff;
+}
+.login-title { text-align: center; font-size: 1.25rem; font-weight: 700; color: #e8f1f8; margin-bottom: 4px; }
+.login-subtitle { text-align: center; font-size: 0.82rem; color: #8fa8bf; margin-bottom: 26px; }
+.login-page label { color: #8fa8bf; }
+.login-page input { background: #0a1929; border-color: #1c3a56; color: #e8f1f8; }
+.champ-mot-de-passe { position: relative; }
+.champ-mot-de-passe input { padding-right: 42px; }
+.toggle-oeil { position: absolute; right: 12px; top: 10px; cursor: pointer; color: #8fa8bf; font-size: 1.1rem; }
+.toggle-oeil:hover { color: #00d4ff; }
+
+.message-erreur { background: rgba(230,67,44,0.1); border: 1px solid var(--red); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; }
+.message-succes { background: rgba(34,181,115,0.1); border: 1px solid var(--green); color: var(--green); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; }
+
+.section-titre { font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; display:flex; justify-content: space-between; align-items:center;}
+
+/* ---------- Workflow des statuts (rapports) ---------- */
+.workflow { display:flex; align-items:center; gap:6px; flex-wrap: wrap; }
+.workflow .etape { text-align:center; flex:1; min-width:110px; }
+.workflow .pastille {
+  width:70px; height:70px; border-radius:50%; margin:0 auto 8px auto;
+  display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:0.72rem;
+}
+.workflow .fleche { color: var(--text-muted); font-size:1.3rem; }
+.workflow .legende { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ---------- Bloc notification (mise en demeure) ---------- */
+.notif-grid { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+@media (max-width: 900px) { .notif-grid { grid-template-columns: 1fr; } }
+.notif-box { background: rgba(45,127,249,0.08); border:1px solid var(--border-color); border-radius:10px; padding:18px; }
+:root[data-theme="dark"] .notif-box { background: rgba(0,212,255,0.08); }
+.notif-box h3 { margin-top:0; font-size:1rem; }
+.notif-envoye { background: rgba(34,181,115,0.14); color: #3fd696; border-radius:8px; padding:10px 14px; font-size:0.85rem; font-weight:600; margin-top:14px; }
+.pdf-preview embed { width:100%; height: 480px; border-radius: 8px; border: 1px solid var(--border-color); }
+
+/* =========================================================
+   Nouvelle page de connexion (fond photo + carte blanche)
+   ========================================================= */
+.lg-page {
+  min-height: 100vh; margin: 0; position: relative;
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  background-color: #0a1929;
+}
+.lg-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(8,20,34,0.88) 0%, rgba(8,20,34,0.62) 42%, rgba(8,20,34,0.18) 100%);
+}
+.lg-conteneur {
+  position: relative; z-index: 1; min-height: 100vh;
+  max-width: 1150px; margin: 0 auto; padding: 30px 40px;
+  display: flex; align-items: center; justify-content: space-between; gap: 40px;
+}
+.lg-gauche { color: #fff; max-width: 460px; }
+.lg-embleme { width: 84px; height: 84px; margin-bottom: 18px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4)); }
+.lg-gauche h1 { font-size: 2.1rem; margin: 0 0 12px 0; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.lg-sous-titre { font-size: 1.05rem; line-height: 1.5; margin: 0 0 40px 0; color: #e3ecf6; text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+.lg-slogan { font-size: 1.05rem; font-weight: 600; line-height: 1.5; margin: 0; padding-left: 14px; border-left: 3px solid #00d4ff; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
+
+.lg-carte {
+  background: #ffffff; color: #1c2b3a; width: 100%; max-width: 380px;
+  border-radius: 14px; padding: 34px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.lg-carte-icone {
+  width: 48px; height: 48px; margin: 0 auto 8px auto; border-radius: 50%;
+  background: #e8f1ff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.lg-carte h2 { text-align: center; margin: 0; font-size: 1.35rem; color: #0f2942; }
+.lg-carte-titre-app { text-align: center; color: #6b7c93; font-size: 0.82rem; margin: 4px 0 22px 0; }
+
+.lg-champ { position: relative; margin-bottom: 14px; }
+.lg-champ input {
+  width: 100%; margin: 0; padding: 12px 42px 12px 42px; background: #f4f7fb;
+  border: 1px solid #d5deea; border-radius: 8px; color: #1c2b3a; font-size: 0.95rem;
+}
+.lg-champ input:focus { outline: none; border-color: #2d7ff9; background: #fff; }
+.lg-champ-icone { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 1rem; opacity: 0.75; }
+.lg-oeil { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.1rem; color: #6b7c93; user-select: none; }
+.lg-oeil:hover { color: #2d7ff9; }
+
+.lg-bouton {
+  width: 100%; margin-top: 6px; padding: 12px; border: none; border-radius: 8px;
+  background: #1a66d8; color: #fff; font-weight: 700; font-size: 0.98rem; cursor: pointer;
+}
+.lg-bouton:hover { background: #1453b3; }
+.lg-oublie { display: block; text-align: center; margin-top: 16px; font-size: 0.85rem; color: #1a66d8; }
+.lg-info { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: #eef4ff; color: #35507a; font-size: 0.8rem; text-align: center; }
+
+@media (max-width: 860px) {
+  .lg-conteneur { flex-direction: column; justify-content: center; padding: 24px 18px; }
+  .lg-gauche { text-align: center; }
+  .lg-slogan { border-left: none; padding-left: 0; }
+  .lg-overlay { background: rgba(8,20,34,0.72); }
+}
+
+/* ---------- Hauteurs distinctes des graphiques du tableau de bord ---------- */
+.charts-grid { align-items: start; }
+.chart-boite-barres { position: relative; height: 280px; }
+.chart-boite-camembert { position: relative; height: 370px; }
+
+/* ---------- Carte de connexion translucide (le fond reste visible à travers) ---------- */
+.lg-carte {
+  background: rgba(255, 255, 255, 0.26);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  color: #0a1929;
+}
+.lg-carte-icone { background: rgba(255, 255, 255, 0.6); }
+.lg-carte h2 { color: #0a1929; font-weight: 800; text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8); }
+.lg-carte-titre-app { color: #12263d; font-weight: 600; text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8); }
+.lg-champ input { background: rgba(255, 255, 255, 0.78); border-color: rgba(255, 255, 255, 0.9); }
+.lg-champ input:focus { background: rgba(255, 255, 255, 0.95); }
+.lg-oublie { color: #0a2f78; font-weight: 700; text-shadow: 0 1px 3px rgba(255, 255, 255, 0.85); }
+.lg-info { background: rgba(255, 255, 255, 0.8); }

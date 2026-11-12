@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titre %}Mise en demeure - D-{{ '%05d'|format(dette.id) }}{% endblock %}
+{% block page_titre %}Notification et mise en demeure{% endblock %}
+{% block contenu %}
+
+<div class="card-app">
+  <strong>Dossier D-{{ '%05d'|format(dette.id) }}</strong> —
+  {{ dette.nom_contribuable }} {{ dette.prenom_contribuable or '' }} ·
+  {{ dette.nature_impot }} ·
+  {{ "{:,.0f}".format(dette.montant).replace(",", " ") }} Ar ·
+  échéance {{ dette.date_echeance }} ·
+  <span class="badge badge-{{ dette.statut }}">{{ dette.statut|libelle_statut }}</span>
+</div>
+
+<div class="notif-grid">
+  <div class="card-app">
+    <div class="chart-titre">Email / SMS (simulation)</div>
+    <div class="notif-box">
+      <h3>📩 Notification de relance</h3>
+      <p>Bonjour {{ dette.nom_contribuable }} {{ dette.prenom_contribuable or '' }},</p>
+      <p>Votre dette fiscale d'un montant de {{ "{:,.0f}".format(dette.montant).replace(",", " ") }} Ar
+         est arrivée à échéance le {{ dette.date_echeance }}.<br>
+         Veuillez procéder au règlement dans les meilleurs délais.</p>
+      <p>Cordialement,<br>Administration Fiscale</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('envoyer_mise_en_demeure', id_dette=dette.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-primary" style="margin-top:14px;">📤 Envoyer la notification</button>
+    </form>
+    {% if derniere %}
+    <div class="notif-envoye">✔ Email envoyé (simulation) — dernière relance le {{ derniere.date_relance }}</div>
+    {% endif %}
+  </div>
+
+  <div class="card-app">
+    <div class="chart-titre">Aperçu de la mise en demeure (PDF)</div>
+    <div class="pdf-preview">
+      <embed src="{{ url_for('telecharger_pdf', id_dette=dette.id) }}" type="application/pdf">
+    </div>
+    <a href="{{ url_for('telecharger_pdf_direct', id_dette=dette.id) }}" class="btn btn-primary" style="width:100%; text-align:center; margin-top:14px;">⬇️ Télécharger le PDF</a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titre %}Paramètres{% endblock %}
+{% block page_titre %}Paramètres{% endblock %}
+{% block contenu %}
+
+<div class="card-app" style="max-width:520px;">
+  <div class="chart-titre">Compte administrateur</div>
+  <label>Identifiant</label>
+  <input type="text" value="{{ session.get('utilisateur','') }}" disabled>
+  <label>Rôle</label>
+  <input type="text" value="{{ session.get('role','') }}" disabled>
+</div>
+
+<div class="card-app" style="max-width:520px;">
+  <div class="chart-titre">Automatisation</div>
+  <label>Heure de vérification quotidienne des échéances</label>
+  <input type="time" value="06:00" disabled>
+  <label>Délai légal de régularisation (jours)</label>
+  <input type="number" value="15" disabled>
+  <p style="color:var(--text-muted); font-size:0.82rem;">Ces paramètres sont définis dans app.py / utils/pdf_generator.py — cette page peut être rendue modifiable comme évolution du projet.</p>
+</div>
+
+{% endblock %}

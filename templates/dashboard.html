@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block titre %}Tableau de bord - Gestion des créances fiscales{% endblock %}
+{% block page_titre %}Tableau de bord{% endblock %}
+{% block contenu %}
+
+<div class="stat-grid">
+  <div class="stat-card stat-blue">
+    <div class="valeur">{{ stats.nb_contribuables }}</div>
+    <div class="label">Contribuables</div>
+  </div>
+  <div class="stat-card stat-green">
+    <div class="valeur">{{ stats.total_dettes }}</div>
+    <div class="label">Dettes</div>
+  </div>
+  <div class="stat-card stat-red">
+    <div class="valeur">{{ stats.nb_impayees }}</div>
+    <div class="label">Dettes impayées</div>
+  </div>
+  <div class="stat-card stat-orange">
+    <div class="valeur">{{ stats.nb_relances }}</div>
+    <div class="label">Relances</div>
+  </div>
+  <div class="stat-card stat-purple">
+    <div class="valeur">{{ stats.nb_mise_en_demeure }}</div>
+    <div class="label">Mises en demeure</div>
+  </div>
+</div>
+
+<div class="charts-grid">
+  <div class="card-app">
+    <div class="chart-titre">Répartition des dettes par type d'impôt</div>
+    <div class="chart-boite-barres"><canvas id="graphNature"></canvas></div>
+  </div>
+  <div class="card-app">
+    <div class="chart-titre">Statut des dettes</div>
+    <div class="chart-boite-camembert"><canvas id="graphStatut"></canvas></div>
+  </div>
+</div>
+
+<div class="card-app">
+  <div class="section-titre">
+    <span>Dernières créances</span>
+    <a href="{{ url_for('dettes') }}" class="btn btn-outline btn-sm">Voir tout</a>
+  </div>
+  <table class="table-app">
+    <thead>
+      <tr><th>Contribuable</th><th>Nature</th><th>Montant</th><th>Échéance</th><th>Statut</th></tr>
+    </thead>
+    <tbody>
+      {% for d in dettes[:6] %}
+      <tr>
+        <td>{{ d.nom_contribuable }} {{ d.prenom_contribuable or '' }}</td>
+        <td>{{ d.nature_impot }}</td>
+        <td>{{ "{:,.0f}".format(d.montant).replace(",", " ") }} Ar</td>
+        <td>{{ d.date_echeance }}</td>
+        <td><span class="badge badge-{{ d.statut }}">{{ d.statut|libelle_statut }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+(function () {
+  const style = getComputedStyle(document.documentElement);
+  const couleurTexte = style.getPropertyValue('--text-muted').trim();
+  const couleurGrille = style.getPropertyValue('--border-color').trim();
+  const couleurCarte = style.getPropertyValue('--card-bg').trim();
+  Chart.defaults.color = couleurTexte;
+  Chart.defaults.borderColor = couleurGrille;
+
+
+  // Affiche le nombre de dettes au-dessus de chaque marche de l'escalier
+  const valeursBarres = {
+    id: 'valeursBarres',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      const data = chart.data.datasets[0].data;
+      chart.getDatasetMeta(0).data.forEach(function (barre, i) {
+        ctx.save();
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-dark').trim();
+        ctx.font = 'bold 13px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(String(data[i]), barre.x, barre.y - 5);
+        ctx.restore();
+      });
+    }
+  };
+
+  // Affiche le pourcentage de chaque part sur le camembert
+  const pourcentages = {
+    id: 'pourcentages',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      const data = chart.data.datasets[0].data;
+      const total = data.reduce(function (a, b) { return a + Number(b); }, 0);
+      if (!total) return;
+      chart.getDatasetMeta(0).data.forEach(function (arc, i) {
+        const valeur = Number(data[i]);
+        if (!valeur) return;
+        const pct = Math.round(valeur / total * 1000) / 10;
+        const pos = arc.tooltipPosition();
+        ctx.save();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'rgba(0,0,0,0.45)';
+        ctx.shadowBlur = 3;
+        ctx.fillText((pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(1)) + '%', pos.x, pos.y);
+        ctx.restore();
+      });
+    }
+  };
+
+  new Chart(document.getElementById('graphNature'), {
+    type: 'bar',
+    data: {
+      labels: {{ labels_nature|safe }},
+      datasets: [{
+        label: "Nombre de dettes",
+        data: {{ valeurs_nature|safe }},
+        backgroundColor: ['#2d7ff9', '#22b573', '#f5a623', '#8b5cf6', '#e6432c', '#64748b'],
+        borderRadius: 0, barPercentage: 1, categoryPercentage: 1, borderWidth: 2, borderColor: couleurCarte,
+      }]
+    },
+    plugins: [valeursBarres],
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grace: '12%', ticks: { precision: 0 } } } }
+  });
+
+  new Chart(document.getElementById('graphStatut'), {
+    type: 'pie',
+    data: {
+      labels: {{ statut_labels|safe }},
+      datasets: [{
+        data: {{ statut_valeurs|safe }},
+        backgroundColor: ['#22b573', '#64748b', '#e6432c', '#f5a623', '#8b5cf6'],
+        borderColor: couleurCarte,
+        borderWidth: 2,
+      }]
+    },
+    plugins: [pourcentages],
+    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, color: couleurTexte } } } }
+  });
+})();
+</script>
+
+{% endblock %}

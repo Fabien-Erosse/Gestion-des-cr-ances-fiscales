@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titre %}Dettes fiscales{% endblock %}
+{% block page_titre %}Dettes fiscales{% endblock %}
+{% block contenu %}
+
+<div class="card-app">
+  <div class="section-titre">
+    <span>Liste des dettes fiscales</span>
+    <a href="{{ url_for('ajouter_dette') }}" class="btn btn-primary btn-sm">+ Ajouter une dette fiscale</a>
+  </div>
+  <table class="table-app">
+    <thead>
+      <tr><th>N°</th><th>Contribuable</th><th>Type d'impôt</th><th>Montant</th><th>Échéance</th><th>Statut</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for d in dettes %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ d.nom_contribuable }} {{ d.prenom_contribuable or '' }}</td>
+        <td>{{ d.nature_impot }}</td>
+        <td>{{ "{:,.0f}".format(d.montant).replace(",", " ") }} Ar</td>
+        <td>{{ d.date_echeance }}</td>
+        <td><span class="badge badge-{{ d.statut }}">{{ d.statut|libelle_statut }}</span></td>
+        <td>
+          <a href="{{ url_for('mise_en_demeure', id_dette=d.id) }}" class="btn-icon" title="Voir / Mise en demeure">👁️</a>
+          {% if d.statut != 'payee' %}
+          <form method="POST" action="{{ url_for('changer_statut_dette', id_dette=d.id, statut='payee') }}" style="display:inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-icon" title="Marquer payée">✅</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Aucune dette enregistrée.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

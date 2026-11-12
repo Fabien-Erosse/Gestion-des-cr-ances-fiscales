@@ -1,0 +1,35 @@
+﻿# Variables d'environnement et mots de passe
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Fichiers temporaires
+*.log
+*.tmp
+
+# Fichiers PDF générés
+static/relances_pdf/
+
+# Configuration locale
+.vscode/
+.idea/
+
+# Sauvegardes de bases de données
+*.sql
+*.sql.gz
+*.dump
+*.bak
+
+# Système Windows
+Thumbs.db
+Desktop.ini

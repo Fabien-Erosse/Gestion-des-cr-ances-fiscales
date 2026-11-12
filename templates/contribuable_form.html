@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block titre %}{{ 'Modifier' if contribuable else 'Nouveau' }} contribuable{% endblock %}
+{% block page_titre %}{{ 'Modifier le contribuable' if contribuable else 'Nouveau contribuable' }}{% endblock %}
+{% block contenu %}
+
+<div class="card-app" style="max-width:520px;">
+  <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Nom</label>
+    <input type="text" name="nom" value="{{ contribuable.nom if contribuable else '' }}" required>
+
+    <label>Prénom</label>
+    <input type="text" name="prenom" value="{{ contribuable.prenom if contribuable else '' }}">
+
+    <label>Numéro fiscal (NIF)</label>
+    <input type="text" name="nif" value="{{ contribuable.nif if contribuable else '' }}" required>
+
+    <label>Adresse</label>
+    <input type="text" name="adresse" value="{{ contribuable.adresse if contribuable else '' }}">
+
+    <label>Email</label>
+    <input type="email" name="email" value="{{ contribuable.email if contribuable else '' }}">
+
+    <label>Téléphone</label>
+    <input type="text" name="telephone" value="{{ contribuable.telephone if contribuable else '' }}">
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+    <a href="{{ url_for('contribuables') }}" class="btn btn-outline">Annuler</a>
+  </form>
+</div>
+
+{% endblock %}
